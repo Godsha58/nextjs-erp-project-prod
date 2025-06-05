@@ -11,7 +11,7 @@ type RowData = {
   id: string;
   select?: boolean;
   active?: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | number | undefined;
 };
 
 type Props = {
