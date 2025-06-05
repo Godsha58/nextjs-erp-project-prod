@@ -1,0 +1,16 @@
+.button {
+  background: linear-gradient(
+    to bottom,
+    #a01217 0%,
+    #a01217 50%,
+    #880f14 100%
+  );
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  transition: opacity 0.3s ease;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
