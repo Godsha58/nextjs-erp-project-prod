@@ -1,8 +1,20 @@
 'use client';
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { useRouter } from "next/compat/router";
+import { useEffect } from "react";
+
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router)
+    if (typeof window !== "undefined" && localStorage.getItem("isAuthenticated") !== "true") {
+      router.push("/login");
+    }
+  }, [router]);
+  //Holis//
   return (
     <div className="flex flex-col min-h-screen min-w-screen bg-black relative overflow-hidden">
       {/* Background decorative elements */}
