@@ -12,6 +12,7 @@ export default function Home() {
       router.push("/login");
     }
   }, [router]);
+  //Holis//
   return (
     <div className="flex flex-col min-h-screen min-w-screen bg-gray-100">
       <Navbar />
