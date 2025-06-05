@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+
 
 type ColumnConfig = {
   key: string;
@@ -21,13 +23,18 @@ type Props = {
   onDataChange?: (updatedData: RowData[]) => void; // opcional para subir cambios de active
 };
 
-export default function DynamicTable({ data: initialData, columns, onSelectedRowsChange, onDataChange }: Props) {
+export default function DynamicTable({
+  data: initialData,
+  columns,
+  onSelectedRowsChange,
+  onDataChange,
+}: Props) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [data, setData] = useState<RowData[]>(initialData);
 
   const toggleRow = (rowId: string) => {
     const updated = selectedRows.includes(rowId)
-      ? selectedRows.filter(id => id !== rowId)
+      ? selectedRows.filter((id) => id !== rowId)
       : [...selectedRows, rowId];
 
     setSelectedRows(updated);
@@ -35,7 +42,7 @@ export default function DynamicTable({ data: initialData, columns, onSelectedRow
   };
 
   const toggleActive = (rowId: string) => {
-    const newData = data.map(row => {
+    const newData = data.map((row) => {
       if (row.id === rowId) {
         return { ...row, active: !row.active };
       }
@@ -50,7 +57,12 @@ export default function DynamicTable({ data: initialData, columns, onSelectedRow
       <thead>
         <tr className="bg-[#a01217] text-white">
           {columns.map((col) => (
-            <th key={col.key} className="px-4 py-2 text-left border-b border-black">{col.label}</th>
+            <th
+              key={col.key}
+              className="px-4 py-2 text-left border-b border-black"
+            >
+              {col.label}
+            </th>
           ))}
         </tr>
       </thead>
@@ -62,9 +74,7 @@ export default function DynamicTable({ data: initialData, columns, onSelectedRow
             <tr
               key={idx}
               className={`border-b border-black transition-all ${
-                isSelected
-                  ? "bg-black/10"
-                  : "hover:bg-black/10"
+                isSelected ? "bg-black/10" : "hover:bg-black/10"
               }`}
             >
               {columns.map((col) => (
@@ -86,6 +96,27 @@ export default function DynamicTable({ data: initialData, columns, onSelectedRow
                       />
                       <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-black after:border after:rounded-full after:h-5 after:w-5 after:transition-transform peer-checked:bg-[#a01217]"></div>
                     </label>
+                  ) : col.type === "action" ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => alert(`Ver fila ${row.id}`)}
+                        className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
+                      >
+                        <FaEye className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => alert(`Editar fila ${row.id}`)}
+                        className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
+                      >
+                        <FaEdit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => alert(`Eliminar fila ${row.id}`)}
+                        className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
+                      >
+                        <FaTrash className="w-5 h-5" />
+                      </button>
+                    </div>
                   ) : (
                     row[col.key]
                   )}

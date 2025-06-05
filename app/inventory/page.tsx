@@ -7,7 +7,7 @@ import DynamicTable from '@/components/DynamicTable';
 import styles from './page.module.css';
 
 const columns = [
-  { key: 'select', label: '', type: 'checkbox' },
+  { key: 'select', label: '', type: 'action' },
   { key: 'id', label: 'ID Product', type: 'text' },
   { key: 'name', label: 'Name', type: 'text' },
   { key: 'description', label: 'Description', type: 'text' },
