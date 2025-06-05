@@ -1,0 +1,22 @@
+.dropdownButton {
+  background: linear-gradient(
+    to bottom,
+    #a01217 0%,
+    #a01217 50%,
+    #880f14 100%
+  );
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  font-size: 0.875rem; /* text-sm */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border: none;
+  transition: opacity 0.3s ease;
+}
+
+.dropdownButton:hover {
+  opacity: 0.8;
+}
