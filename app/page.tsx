@@ -1,7 +1,17 @@
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
+   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("isAuthenticated") !== "true") {
+      router.push("/login");
+    }
+  }, [router]);
   return (
     <div className="flex flex-col min-h-screen min-w-screen bg-gray-100">
       <Navbar />
