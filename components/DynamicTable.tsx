@@ -4,14 +4,14 @@ import { useState } from "react";
 type ColumnConfig = {
   key: string;
   label: string;
-  type?: "text" | "checkbox" | "switch" | "action";
+  type: "text" | "checkbox" | "switch" | "action" | string;
 };
 
 type RowData = {
   id: string;
   select?: boolean;
   active?: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | number | undefined;
 };
 
 type Props = {
