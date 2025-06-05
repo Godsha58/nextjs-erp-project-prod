@@ -7,12 +7,12 @@ import DynamicTable from '@/components/DynamicTable';
 import styles from './page.module.css';
 
 const columns = [
-  { key: 'select', label: '', type: 'checkbox' },
-  { key: 'id', label: 'ID Product', type: 'text' },
+  { key: 'select', label: '', type: checkbox },
+  { key: 'id', label: 'ID Product', type: text },
   { key: 'name', label: 'Name', type: 'text' },
-  { key: 'description', label: 'Description', type: 'text' },
-  { key: 'price', label: 'Price', type: 'text' },
-  { key: 'active', label: 'Active', type: 'switch' },
+  { key: 'description', label: 'Description', type: text },
+  { key: 'price', label: 'Price', type: text },
+  { key: 'active', label: 'Active', type: switch },
 ];
 
 const data = [
