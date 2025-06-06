@@ -5,6 +5,7 @@ import Dropdown from "@/components/Dropdown";
 import DynamicTable from "@/components/DynamicTable";
 
 import { useState } from "react";
+import { FaFileExcel } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import styles from "@/app/finance/page.module.css"; 
 
@@ -107,7 +108,7 @@ const data = [
               <Button
                 label={
                   <div className="flex items-center gap-2">
-                    
+                    <FaFileExcel className="w-4 h-4" />
                     <span> Excel</span>
                   </div>
                 }
