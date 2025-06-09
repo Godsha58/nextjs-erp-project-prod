@@ -15,6 +15,7 @@ interface DropdownProps {
   onSelect?: (value: string) => void;
   defaultValue?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export default function Dropdown({
@@ -23,6 +24,7 @@ export default function Dropdown({
   onSelect,
   defaultValue,
   disabled = false,
+  className,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<DropdownOption | null>(
