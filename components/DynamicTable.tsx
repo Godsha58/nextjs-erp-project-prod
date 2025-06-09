@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-
+import { useRouter } from "next/navigation";
 
 type ColumnConfig = {
   key: string;
@@ -20,7 +20,19 @@ type Props = {
   data: RowData[];
   columns: ColumnConfig[];
   onSelectedRowsChange?: (selectedIds: string[]) => void;
-  onDataChange?: (updatedData: RowData[]) => void; // opcional para subir cambios de active
+  onDataChange?: (updatedData: RowData[]) => void;
+  actionHandlers?: {
+    onView?: (rowId: string) => void;
+    onEdit?: (rowId: string) => void;
+    onAccept?: (rowId: string) => void;
+    onCancel?: (rowId: string) => void;
+    onDelete?: (rowId: string) => void;
+  };
+  actionIcons?: {
+    icon1?: React.ReactNode;
+    icon2?: React.ReactNode;
+    icon3?: React.ReactNode;
+  };
 };
 
 export default function DynamicTable({
@@ -28,6 +40,8 @@ export default function DynamicTable({
   columns,
   onSelectedRowsChange,
   onDataChange,
+  actionHandlers,
+  actionIcons,
 }: Props) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [data, setData] = useState<RowData[]>(initialData);
@@ -51,6 +65,8 @@ export default function DynamicTable({
     setData(newData);
     if (onDataChange) onDataChange(newData);
   };
+
+  const router = useRouter();
 
   return (
     <table className="min-w-full border border-black bg-transparent text-black rounded-lg overflow-hidden">
@@ -99,22 +115,31 @@ export default function DynamicTable({
                   ) : col.type === "action" ? (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => alert(`Ver fila ${row.id}`)}
+                        onClick={() =>
+                          actionHandlers?.onView?.(row.id) ??
+                          router.push("/finance/pending-to-pay/" + row.id)
+                        }
                         className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                       >
-                        <FaEye className="w-5 h-5" />
+                        {actionIcons?.icon1 ?? <FaEye className="w-5 h-5" />}
                       </button>
                       <button
-                        onClick={() => alert(`Editar fila ${row.id}`)}
+                        onClick={() =>
+                          actionHandlers?.onAccept?.(row.id) ??
+                          alert(`Editar fila ${row.id}`)
+                        }
                         className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                       >
-                        <FaEdit className="w-5 h-5" />
+                        {actionIcons?.icon2 ?? <FaEdit className="w-5 h-5" />}
                       </button>
                       <button
-                        onClick={() => alert(`Eliminar fila ${row.id}`)}
+                        onClick={() =>
+                          actionHandlers?.onCancel?.(row.id) ??
+                          alert(`Eliminar fila ${row.id}`)
+                        }
                         className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                       >
-                        <FaTrash className="w-5 h-5" />
+                        {actionIcons?.icon3 ?? <FaTrash className="w-5 h-5" />}
                       </button>
                     </div>
                   ) : (
