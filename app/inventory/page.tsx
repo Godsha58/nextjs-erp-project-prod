@@ -7,7 +7,7 @@ import DynamicTable from '@/components/DynamicTable';
 import styles from './page.module.css';
 
 const columns = [
-  { key: 'select', label: '', type: 'checkbox' },
+  { key: 'select', label: '', type: 'action' },
   { key: 'id', label: 'ID Product', type: 'text' },
   { key: 'name', label: 'Name', type: 'text' },
   { key: 'description', label: 'Description', type: 'text' },
@@ -66,7 +66,6 @@ export default function InventoryPage() {
   return (
     <div className="flex">
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
-        <main className="p-4">
           <h1 className="text-2xl font-bold mb-4 text-black">Inventory Module</h1>
 
           {/* Dropdowns arriba de la tabla */}
@@ -94,8 +93,8 @@ export default function InventoryPage() {
             <Button label="Register entry" onClick={() => alert('Register entry')} />
             <Button label="Change warehouse" onClick={() => alert('Change warehouse')} />
           </div>
-        </main>
+        </div>
+    );
       </div>
-    </div>
   );
 }
