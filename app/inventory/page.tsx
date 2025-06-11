@@ -8,17 +8,12 @@ import styles from './page.module.css';
 
 const columns = [
   { key: 'select', label: '', type: 'checkbox' },
-  { key: 'id', label: 'ID Product', type: 'text' },
+  { key: 'product_id', label: 'ID Product', type: 'text' },
   { key: 'name', label: 'Name', type: 'text' },
   { key: 'description', label: 'Description', type: 'text' },
-  { key: 'price', label: 'Price', type: 'text' },
+  { key: 'stock', label: 'Quantity', type: 'text' },
+  { key: 'sale_price', label: 'Price', type: 'text' },
   { key: 'active', label: 'Active', type: 'switch' },
-];
-
-const warehouseOptions = [
-  { label: 'Site 1', value: 'site1' },
-  { label: 'Site 2', value: 'site2' },
-  { label: 'Site 3', value: 'site3' },
 ];
 
 const productTypeOptions = [
@@ -35,17 +30,48 @@ const supplierOptions = [
 
 export default function InventoryPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [data, setData] = useState([]); // <- Vacío para datos reales
+  const [tableData, setTableData] = useState([]);
+  const [warehouseList, setWarehouseList] = useState([]);
 
-  // Aquí tu compañero backend puede traer los datos reales
   useEffect(() => {
-    // Ejemplo de cómo podría verse:
-    // fetch('/api/products')
-    //   .then(res => res.json())
-    //   .then(data => setData(data));
+    fetch('/api/inventory/warehouses')
+      .then(res => res.json())
+      .then(data => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const warehouse_list = data.map((item: any) => ({
+          label: item.name,
+          value: item.name
+        }));
 
-    // Por ahora solo dejamos el espacio preparado.
-  }, []);
+        setWarehouseList(warehouse_list);
+
+      });
+  },[]);
+
+  useEffect(() => {
+  console.log("useEffect ejecutado");
+
+  fetch('/api/inventory/products')
+    .then(res => res.json())
+    .then(data => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const transformed = data.map((item: any) => ({
+        id: item.product_id.toString(),
+        product_id: item.product_id.toString(),  // convierte a string
+        select: true,                   // valor inicial para el checkbox
+        name: item.name,
+        description: item.description,
+        stock: item.stock,
+        sale_price: item.sale_price,
+        active: item.active,
+      }));
+
+      console.log('Datos transformados:', transformed);
+      setTableData(transformed);
+    });
+
+    fetch('')
+}, []);
 
   return (
     <div className="flex">
@@ -54,14 +80,14 @@ export default function InventoryPage() {
 
         {/* Dropdowns arriba de la tabla */}
         <div className="flex gap-4 mb-6">
-          <Dropdown options={warehouseOptions} placeholder="Select Warehouse" />
+          <Dropdown options={warehouseList} placeholder="Select Warehouse" />
           <Dropdown options={productTypeOptions} placeholder="Select Product Type" />
           <Dropdown options={supplierOptions} placeholder="Select Supplier" />
         </div>
 
         {/* Tabla dinámica lista para llenarse */}
         <DynamicTable
-          data={data}
+          data={tableData}
           columns={columns}
           onSelectedRowsChange={(ids) => setSelectedIds(ids)}
         />
