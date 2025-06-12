@@ -8,30 +8,43 @@ import styles from './page.module.css';
 
 const columns = [
   { key: 'select', label: '', type: 'checkbox' },
-  { key: 'product_id', label: 'ID Product', type: 'text' },
   { key: 'name', label: 'Name', type: 'text' },
   { key: 'description', label: 'Description', type: 'text' },
+  { key: 'brand', label: 'Brand', type: 'text' },
   { key: 'stock', label: 'Quantity', type: 'text' },
   { key: 'sale_price', label: 'Price', type: 'text' },
   { key: 'active', label: 'Active', type: 'switch' },
-];
-
-const productTypeOptions = [
-  { label: 'Product 1', value: 'product1' },
-  { label: 'Product 2', value: 'product2' },
-  { label: 'Product 3', value: 'product3' },
-];
-
-const supplierOptions = [
-  { label: 'Supplier 1', value: 'supplier1' },
-  { label: 'Supplier 2', value: 'supplier2' },
-  { label: 'Supplier 3', value: 'supplier3' },
 ];
 
 export default function InventoryPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [tableData, setTableData] = useState([]);
   const [warehouseList, setWarehouseList] = useState([]);
+  const [suppliersList, setSuppliersList] = useState([]);
+  const [productTypeList, setProductTypeList] = useState([]);
+
+  const [selectedWarehouse, setSelectedWarehouse] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
+
+  interface FilteredProducts {
+    select: true,
+        id: string,
+        product_id: string,
+        warehouse_id: string,
+        name: string,
+        description: string,
+        sku: string,
+        category_id: string,
+        brand: string,
+        measure_unit: string,
+        cost_price: string,
+        sale_price: string,
+        active: boolean,
+        stock: string,
+  }
+
+  const [filteredData, setFilteredData] = useState<FilteredProducts[]>([]);
 
   useEffect(() => {
     fetch('/api/inventory/warehouses')
@@ -39,11 +52,46 @@ export default function InventoryPage() {
       .then(data => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const warehouse_list = data.map((item: any) => ({
+          warehouse_id: item.warehouse_id,
           label: item.name,
-          value: item.name
+          value: item.warehouse_id
         }));
 
         setWarehouseList(warehouse_list);
+
+      });
+  },[]);
+
+  useEffect(() => {
+    fetch('/api/inventory/product_type')
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const category_list = data.map((item: any) => ({
+          category_id: item.category_id,
+          label: item.name,
+          value: item.category_id
+        }));
+
+        setProductTypeList(category_list);
+
+      });
+  },[]);
+
+  useEffect(() => {
+    fetch('/api/inventory/suppliers')
+      .then(res => res.json())
+      .then(data => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const suppliers_list = data.map((item: any) => ({
+          supplier_id: item.supplier_id,
+          label: item.name,
+          value: item.supplier_id
+        }));
+
+        setSuppliersList(suppliers_list);
 
       });
   },[]);
@@ -56,22 +104,44 @@ export default function InventoryPage() {
     .then(data => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const transformed = data.map((item: any) => ({
+        select: true,
         id: item.product_id.toString(),
-        product_id: item.product_id.toString(),  // convierte a string
-        select: true,                   // valor inicial para el checkbox
+        product_id: item.product_id,
+        warehouse_id: item.warehouse_id,
         name: item.name,
         description: item.description,
-        stock: item.stock,
+        sku: item.sku,
+        category_id: item.category_id,
+        brand: item.brand,
+        measure_unit: item.measure_unit,
+        cost_price: item.cost_price,
         sale_price: item.sale_price,
         active: item.active,
+        stock: item.stock,
       }));
 
       console.log('Datos transformados:', transformed);
       setTableData(transformed);
     });
-
-    fetch('')
 }, []);
+
+useEffect(() => {
+  let filtered = [...tableData];
+
+  if (selectedWarehouse) {
+    filtered = filtered.filter(item => item['warehouse_id'] === Number(selectedWarehouse));
+  }
+
+  if (selectedCategory) {
+    filtered = filtered.filter(item => item['category_id'] === Number(selectedCategory));
+  }
+
+  if (selectedSupplier) {
+    filtered = filtered.filter(item => item['supplier_id'] === Number(selectedSupplier));
+  }
+
+  setFilteredData(filtered);
+}, [selectedWarehouse, selectedCategory, selectedSupplier, tableData]);
 
   return (
     <div className="flex">
@@ -80,14 +150,34 @@ export default function InventoryPage() {
 
         {/* Dropdowns arriba de la tabla */}
         <div className="flex gap-4 mb-6">
-          <Dropdown options={warehouseList} placeholder="Select Warehouse" />
-          <Dropdown options={productTypeOptions} placeholder="Select Product Type" />
-          <Dropdown options={supplierOptions} placeholder="Select Supplier" />
+          <Dropdown 
+            options={warehouseList} 
+            placeholder="Select Warehouse"
+            onSelect={value => setSelectedWarehouse(value)}
+          />
+          <Dropdown 
+            options={productTypeList} 
+            placeholder="Select Product Type"
+            onSelect={value => setSelectedCategory(value)} 
+          />
+          <Dropdown 
+            options={suppliersList} 
+            placeholder="Select Supplier"
+            onSelect={value => setSelectedSupplier(value)} 
+          />
+          <Button
+            label="Clear Filters"
+            onClick={() => {
+              setSelectedWarehouse(null);
+              setSelectedCategory(null);
+              setSelectedSupplier(null);
+            }}
+          />
         </div>
 
         {/* Tabla dinámica lista para llenarse */}
         <DynamicTable
-          data={tableData}
+          data={filteredData}
           columns={columns}
           onSelectedRowsChange={(ids) => setSelectedIds(ids)}
         />

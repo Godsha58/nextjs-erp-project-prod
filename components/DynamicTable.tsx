@@ -9,6 +9,23 @@ type ColumnConfig = {
   type: "text" | "checkbox" | "switch" | "action" | string;
 };
 
+type FilteredProducts = {
+  select: true,
+        id: string,
+        product_id: string,
+        warehouse_id: string,
+        name: string,
+        description: string,
+        sku: string,
+        category_id: string,
+        brand: string,
+        measure_unit: string,
+        cost_price: string,
+        sale_price: string,
+        active: boolean,
+        stock: string,
+}
+
 type RowData = {
   id: string;
   select?: boolean;
@@ -17,7 +34,7 @@ type RowData = {
 };
 
 type Props = {
-  data: RowData[];
+  data: RowData[] | FilteredProducts[];
   columns: ColumnConfig[];
   onSelectedRowsChange?: (selectedIds: string[]) => void;
   onDataChange?: (updatedData: RowData[]) => void;
@@ -71,6 +88,30 @@ export default function DynamicTable({
   };
 
   const router = useRouter();
+
+  if (!data || data.length === 0) {
+  return (
+    <div>
+    <table className="min-w-full border border-black bg-transparent text-black rounded-lg overflow-hidden">
+      <thead>
+        <tr className="bg-[#a01217] text-white">
+          {columns.map((col) => (
+            <th
+              key={col.key}
+              className="px-4 py-2 text-left border-b border-black"
+            >
+              {col.label}
+            </th>
+          ))}
+        </tr>
+      </thead>
+     </table> 
+    <div className="flex justify-center items-center h-64 w-full">
+      <span className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#a01217]" />
+    </div>
+    </div>
+    );
+  }
 
   return (
     <table className="min-w-full border border-black bg-transparent text-black rounded-lg overflow-hidden">
