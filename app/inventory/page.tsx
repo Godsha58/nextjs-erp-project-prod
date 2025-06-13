@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
 import Dropdown from '@/components/Dropdown';
 import DynamicTable from '@/components/DynamicTable';
+import AlertDialog from '@/components/AlertDialog';
 import styles from './page.module.css';
 
 const columns = [
@@ -17,7 +18,6 @@ const columns = [
 ];
 
 export default function InventoryPage() {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [tableData, setTableData] = useState([]);
   const [warehouseList, setWarehouseList] = useState([]);
   const [suppliersList, setSuppliersList] = useState([]);
@@ -27,6 +27,7 @@ export default function InventoryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
 
+  const [showAlertDialog, setShowAlertDialog] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -153,6 +154,17 @@ export default function InventoryPage() {
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
         <h1 className="text-2xl font-bold mb-4 text-black">Inventory Module</h1>
         <div className="flex gap-4 mb-6">
+          {
+            showAlertDialog && (
+              <AlertDialog
+                content='¿Está seguro que quiere eliminar el siguiente producto de la base de datos?'
+                onSuccess={() => alert('f')}
+                onNeutral={() => alert('otra accion')}
+                onNeutralLabel='Neutral'
+                onCancel={() => setShowAlertDialog(false)}
+                />
+            )
+          }
           <Dropdown 
             options={warehouseList} 
             placeholder="Select Warehouse"
@@ -187,15 +199,13 @@ export default function InventoryPage() {
           columns={columns}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
-          onSelectedRowsChange={(ids) => setSelectedIds(ids)}
         />
 
         <div className="mt-4 flex flex-wrap gap-4">
           <Button
             label="Remove"
             onClick={() => {
-              console.log('IDs seleccionados para eliminar:', selectedIds);
-              alert('Eliminar: ' + selectedIds.join(', '));
+              setShowAlertDialog(true);
             }}
           />
           <Button label="Register product" onClick={() => alert('Register product')} />
