@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
@@ -38,6 +38,8 @@ type Props = {
   columns: ColumnConfig[];
   onSelectedRowsChange?: (selectedIds: string[]) => void;
   onDataChange?: (updatedData: RowData[]) => void;
+  currentPage?: number;
+  onPageChange?: Dispatch<SetStateAction<number>>;
   actionHandlers?: {
     onView?: (rowId: string) => void;
     onEdit?: (rowId: string) => void;
