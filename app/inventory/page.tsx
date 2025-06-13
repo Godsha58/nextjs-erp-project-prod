@@ -27,6 +27,7 @@ export default function InventoryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
 
+
   const [currentPage, setCurrentPage] = useState(1);
 
   interface FilteredProducts {
@@ -151,7 +152,6 @@ export default function InventoryPage() {
     <div className="flex">
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
         <h1 className="text-2xl font-bold mb-4 text-black">Inventory Module</h1>
-
         <div className="flex gap-4 mb-6">
           <Dropdown 
             options={warehouseList} 
