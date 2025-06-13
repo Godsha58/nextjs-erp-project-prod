@@ -7,6 +7,7 @@ import DynamicTable from '@/components/DynamicTable';
 import AlertDialog from '@/components/AlertDialog';
 import styles from './page.module.css';
 import { GoAlertFill } from "react-icons/go";
+import { FaSearch } from "react-icons/fa";
 
 const columns = [
   { key: 'select', label: '', type: 'checkbox' },
@@ -195,6 +196,25 @@ export default function InventoryPage() {
               setCurrentPage(1);
             }}
           />
+          <div className="flex items-center gap-2">
+            <label className="text-[#8b0f14] font-bold">
+              Search:
+            </label>
+            <input
+              type="text"
+              placeholder="Search by name"
+              className="border border-gray-300 rounded px-2 py-1 w-64"
+            />
+            <Button
+              label={
+                <div className="flex items-center gap-2">
+                  <FaSearch className="w-4 h-4" />
+                </div>
+              }
+              className="bg-[#a01217] text-white hover:bg-[#8b0f14] transition-colors p-2 w-fit h-fit"
+              onClick={() => {}}
+            />
+          </div>
         </div>
 
         <DynamicTable
