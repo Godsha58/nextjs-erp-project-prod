@@ -21,7 +21,6 @@ const columns = [
 export default function InventoryPage() {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   const [tableData, setTableData] = useState([]);
   const [warehouseList, setWarehouseList] = useState([]);
   const [suppliersList, setSuppliersList] = useState([]);
