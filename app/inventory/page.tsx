@@ -157,7 +157,6 @@ export default function InventoryPage() {
     <div className="flex">
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
         <h1 className="text-2xl font-bold mb-4 text-black">Inventory Module</h1>
-
         <div className="flex gap-4 mb-6">
           {
             showAlertDialog && (

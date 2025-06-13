@@ -75,6 +75,10 @@ export default function DynamicTable({
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
 
+  useEffect(() => {
+  setData(initialData);
+}, [initialData]);
+
   const toggleRow = (rowId: string) => {
     const updated = selectedRows.includes(rowId)
       ? selectedRows.filter((id) => id !== rowId)
