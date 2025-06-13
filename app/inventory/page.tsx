@@ -27,7 +27,7 @@ export default function InventoryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
 
-  const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
+  const [currentPage, setCurrentPage] = useState(1);
 
   interface FilteredProducts {
     select: true,
@@ -51,69 +51,81 @@ export default function InventoryPage() {
   useEffect(() => {
     fetch('/api/inventory/warehouses')
       .then(res => res.json())
-      .then(data => {
-        const warehouse_list = data.map((item: any) => ({
-          warehouse_id: item.warehouse_id,
-          label: item.name,
-          value: item.warehouse_id.toString()
-        }));
-
-        setWarehouseList(warehouse_list);
-      });
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const warehouse_list = data.map((item: any) => ({
+            warehouse_id: item.warehouse_id,
+            label: item.name,
+            value: item.warehouse_id.toString()
+          }));
+          setWarehouseList(warehouse_list);
+        }
+      );
   }, []);
 
   useEffect(() => {
     fetch('/api/inventory/product_type')
       .then(res => res.json())
-      .then(data => {
-        const category_list = data.map((item: any) => ({
-          category_id: item.category_id,
-          label: item.name,
-          value: item.category_id.toString()
-        }));
-
-        setProductTypeList(category_list);
-      });
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const category_list = data.map((item: any) => ({
+            category_id: item.category_id,
+            label: item.name,
+            value: item.category_id.toString()
+          }));
+          setProductTypeList(category_list);
+        }
+      );
   }, []);
 
   useEffect(() => {
     fetch('/api/inventory/suppliers')
       .then(res => res.json())
-      .then(data => {
-        const suppliers_list = data.map((item: any) => ({
-          supplier_id: item.supplier_id,
-          label: item.name,
-          value: item.supplier_id.toString()
-        }));
-
-        setSuppliersList(suppliers_list);
-      });
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const suppliers_list = data.map((item: any) => ({
+            supplier_id: item.supplier_id,
+            label: item.name,
+            value: item.supplier_id.toString()
+          }));
+          setSuppliersList(suppliers_list);
+        }
+      );
   }, []);
 
   useEffect(() => {
     fetch('/api/inventory/products')
       .then(res => res.json())
-      .then(data => {
-        const transformed = data.map((item: any) => ({
-          select: true,
-          id: item.product_id.toString(),
-          product_id: item.product_id,
-          warehouse_id: item.warehouse_id,
-          name: item.name,
-          description: item.description,
-          sku: item.sku,
-          category_id: item.category_id,
-          brand: item.brand,
-          measure_unit: item.measure_unit,
-          cost_price: item.cost_price,
-          sale_price: item.sale_price,
-          active: item.active,
-          stock: item.stock,
-          supplier_id: item.supplier_id, // Asegúrate de tener supplier_id aquí
-        }));
-
-        setTableData(transformed);
-      });
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformed = data.map((item: any) => ({
+            select: true,
+            id: item.product_id.toString(),
+            product_id: item.product_id,
+            warehouse_id: item.warehouse_id,
+            name: item.name,
+            description: item.description,
+            sku: item.sku,
+            category_id: item.category_id,
+            brand: item.brand,
+            measure_unit: item.measure_unit,
+            cost_price: item.cost_price,
+            sale_price: item.sale_price,
+            active: item.active,
+            stock: item.stock,
+            supplier_id: item.supplier_id,
+          }));
+          setTableData(transformed);
+        }
+      );
   }, []);
 
   useEffect(() => {
@@ -132,7 +144,7 @@ export default function InventoryPage() {
     }
 
     setFilteredData(filtered);
-    setCurrentPage(1); // Resetea la página a 1 cuando cambia un filtro
+    setCurrentPage(1);
   }, [selectedWarehouse, selectedCategory, selectedSupplier, tableData]);
 
   return (
@@ -140,7 +152,6 @@ export default function InventoryPage() {
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
         <h1 className="text-2xl font-bold mb-4 text-black">Inventory Module</h1>
 
-        {/* Dropdowns arriba de la tabla */}
         <div className="flex gap-4 mb-6">
           <Dropdown 
             options={warehouseList} 
@@ -166,17 +177,16 @@ export default function InventoryPage() {
               setSelectedWarehouse(null);
               setSelectedCategory(null);
               setSelectedSupplier(null);
-              setCurrentPage(1); // también resetear al limpiar filtros
+              setCurrentPage(1);
             }}
           />
         </div>
 
-        {/* Tabla dinámica lista para llenarse */}
         <DynamicTable
           data={filteredData}
           columns={columns}
-          currentPage={currentPage}          // Pasa la página actual
-          onPageChange={setCurrentPage}     // Función para cambiar página
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
           onSelectedRowsChange={(ids) => setSelectedIds(ids)}
         />
 
