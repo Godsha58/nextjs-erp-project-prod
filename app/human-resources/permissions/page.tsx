@@ -33,11 +33,21 @@ const columns = [
   { key: 'actions', label: 'Actions', type: 'action' },
 ];
 
+interface Permission {
+  id: string;
+  permissionName: string;
+  description: string;
+  roles: string;
+}
+
+
 export default function PermissionsPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [permissions, setPermissions] = useState(dummyPermissions);
+  const [permissions] = useState(dummyPermissions);
 
-  const renderActions = (row: any) => (
+
+
+  const renderActions = (row: Permission) => (
     <div className="flex gap-2">
       <Button
         label="Assign to Role"

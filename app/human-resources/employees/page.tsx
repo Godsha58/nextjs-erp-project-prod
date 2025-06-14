@@ -60,7 +60,7 @@ export default function EmployeesPage() {
     setSelectedIds(ids);
   };
 
-  const handleDataChange = (updatedData: any[]) => {
+  const handleDataChange = (updatedData: Employee[]) => {
     setEmployees(updatedData as Employee[]);
   };
 

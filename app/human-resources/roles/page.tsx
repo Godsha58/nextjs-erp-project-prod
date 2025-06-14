@@ -42,7 +42,7 @@ const columnConfig = [
 ];
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState(dummyRoles);
+  const [roles] = useState(dummyRoles);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleSelectionChange = (ids: string[]) => {

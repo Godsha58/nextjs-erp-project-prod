@@ -11,12 +11,6 @@ const employees = [
   { label: 'Charlie Smith', value: '3' },
 ];
 
-const statusOptions = [
-  { label: 'Present', value: 'Present' },
-  { label: 'Late', value: 'Late' },
-  { label: 'Absent', value: 'Absent' },
-  { label: 'Justified', value: 'Justified' },
-];
 
 const dummyAttendance = [
   {
@@ -61,12 +55,30 @@ const columns = [
 
 export default function AttendancePage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [attendance, setAttendance] = useState(dummyAttendance);
+  const [attendance] = useState(dummyAttendance);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const filteredAttendance = attendance.filter(
+  item =>
+    (!selectedEmployee || item.employeeName === employees.find(emp => emp.value === selectedEmployee)?.label) &&
+    (!selectedDate || item.date === selectedDate)
+  );
+
+  type AttendanceRecord = {
+    id: string;
+    date: string;
+    employeeName: string;
+    clockIn: string;
+    clockOut: string;
+    status: string;
+    notes: string;
+  };
+
+
+
 
   // Render action buttons for each row
-  const renderActions = (row: any) => (
+  const renderActions = (row: AttendanceRecord) => (
     <div className="flex gap-2">
       <Button
         label="Clock In/Out"
@@ -112,7 +124,7 @@ export default function AttendancePage() {
       </div>
 
       <DynamicTable
-        data={attendance}
+        data={filteredAttendance}
         columns={tableColumns}
         onSelectedRowsChange={setSelectedIds}
       />

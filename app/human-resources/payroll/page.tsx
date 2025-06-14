@@ -54,12 +54,24 @@ const columns = [
 
 export default function PayrollPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [payroll, setPayroll] = useState(dummyPayroll);
-  const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
+  const [payroll] = useState(dummyPayroll);
+  const [setSelectedEmployee] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' });
 
+  interface PayrollItem {
+    id: string;
+    employeeName: string;
+    baseSalary: string;
+    bonuses: string;
+    deductions: string;
+    payPeriod: string;
+    paymentDate: string;
+  }
+
+  
+
   // Render action buttons for each row
-  const renderActions = (row: any) => (
+  const renderActions = (row: PayrollItem) => (
     <div className="flex gap-2">
       <Button
         label="Download Payslip"
