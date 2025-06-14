@@ -4,11 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - finance
-      - human-resources
-      - sales
-      - inventory
-      - maintenance
 jobs:
   lint:
     runs-on: ubuntu-latest
