@@ -1,6 +1,6 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import DynamicTable from "@/components/DynamicTable";
 import styles from "@/app/finance/page.module.css";
 import Button from "@/components/Button";
@@ -16,41 +16,31 @@ const columns = [
   { key: "date", label: "Date", type: "text" },
 ];
 
-const data = [
-  {
-    id: "P001",
-    order_id: "P001",
-    client: "Mariann Valdez",
-    suplier: "supplier1",
-    quantity: 100,
-    description: "LED Lights",
-    date: "2025-06-01",
-    status: "active",
-  },
-  {
-    id: "P002",
-    order_id: "P002",
-    client: "John Doe",
-    suplier: "supplier2",
-    quantity: 20,
-    description: "Wheels",
-    date: "2025-06-02",
-    status: "inactive",
-  },
-  {
-    id: "P003",
-    order_id: "P003",
-    client: "Jane Smith",
-    suplier: "supplier3",
-    quantity: 10,
-    description: "Tires",
-    date: "2025-06-03",
-    status: "active",
-  },
-];
-
 export default function OrdersPage() {
   const router = useRouter();
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/finance/orders")
+      .then((res) => res.json())
+      .then((data) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const transformedData = data.map((order: any) => ({
+          order_id: order.order_id,
+          client: order.client_id,
+          suplier: order.supplier_id,
+          quantity: order.quantity,
+          description: order.description,
+          status: order.status,
+          date: order.order_date
+        }));
+        setOrders(transformedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      });
+  }, []);
+
   return (
     <main className={`${styles.div_principal} gap-2 flex flex-col`}>
       <div className={` flex items-end gap-2 flex-row `}>
@@ -65,7 +55,7 @@ export default function OrdersPage() {
           onClick={() => router.push("/finance/orders/create")}
         />
       </div>
-      <DynamicTable data={data} columns={columns} />
+      <DynamicTable data={orders} columns={columns} />
     </main>
   );
 }
