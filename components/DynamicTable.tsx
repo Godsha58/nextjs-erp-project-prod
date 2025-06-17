@@ -79,6 +79,10 @@ export default function DynamicTable({
   setData(initialData);
 }, [initialData]);
 
+  useEffect(() => {
+  setData(initialData);
+}, [initialData]);
+  
   const toggleRow = (rowId: string) => {
     const updated = selectedRows.includes(rowId)
       ? selectedRows.filter((id) => id !== rowId)
