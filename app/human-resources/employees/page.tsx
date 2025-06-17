@@ -53,15 +53,10 @@ const columnConfig = [
 ];
 
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState(dummyEmployees);
+  const [employees] = useState(dummyEmployees);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   const handleSelectionChange = (ids: string[]) => {
     setSelectedIds(ids);
-  };
-
-  const handleDataChange = (updatedData: Employee[]) => {
-    setEmployees(updatedData as Employee[]);
   };
 
   return (
@@ -93,7 +88,6 @@ export default function EmployeesPage() {
         data={employees}
         columns={columnConfig}
         onSelectedRowsChange={handleSelectionChange}
-        onDataChange={handleDataChange}
       />
 
       {selectedIds.length > 0 && (

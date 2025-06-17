@@ -55,7 +55,6 @@ const columns = [
 export default function PayrollPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [payroll] = useState(dummyPayroll);
-  const [setSelectedEmployee] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' });
 
   interface PayrollItem {
@@ -67,8 +66,6 @@ export default function PayrollPage() {
     payPeriod: string;
     paymentDate: string;
   }
-
-  
 
   // Render action buttons for each row
   const renderActions = (row: PayrollItem) => (
@@ -106,7 +103,7 @@ export default function PayrollPage() {
           <Dropdown
             options={employees}
             placeholder="Filter by employee"
-            onSelect={val => setSelectedEmployee(val)}
+
           />
           <input
             type="date"
