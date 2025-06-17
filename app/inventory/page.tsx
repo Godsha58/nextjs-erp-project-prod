@@ -25,6 +25,7 @@ export default function InventoryPage() {
   const [warehouseList, setWarehouseList] = useState([]);
   const [suppliersList, setSuppliersList] = useState([]);
   const [productTypeList, setProductTypeList] = useState([]);
+  const [prodSuppList, setProdSuppList] = useState([]);
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -134,6 +135,22 @@ export default function InventoryPage() {
   }, []);
 
   useEffect(() => {
+    fetch('/api/inventory/product_supplier')
+      .then(res => res.json())
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const prod_supp_list = data.map((item: any) => ({
+            product_id: item.product_id,
+            supplier_id: item.supplier_id,
+          }));
+          setProdSuppList(prod_supp_list);
+        }
+      )
+  }, []);
+
+  useEffect(() => {
     let filtered = [...tableData];
 
     if (selectedWarehouse) {
@@ -145,12 +162,16 @@ export default function InventoryPage() {
     }
 
     if (selectedSupplier) {
-      filtered = filtered.filter(item => item['supplier_id'] === Number(selectedSupplier));
-    }
+    const matchingProductIds = prodSuppList
+      .filter(link => link['supplier_id'] === Number(selectedSupplier))
+      .map(link => link['product_id']);
+
+    filtered = filtered.filter(item => matchingProductIds.includes(item['product_id']));
+  }
 
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [selectedWarehouse, selectedCategory, selectedSupplier, tableData]);
+  }, [selectedWarehouse, selectedCategory, selectedSupplier, tableData, prodSuppList]);
 
   return (
     <div className="flex">
