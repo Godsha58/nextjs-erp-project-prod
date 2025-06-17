@@ -7,6 +7,7 @@ import DynamicTable from '@/components/DynamicTable';
 import AlertDialog from '@/components/AlertDialog';
 import styles from './page.module.css';
 import { GoAlertFill } from "react-icons/go";
+import { FaSearch } from "react-icons/fa";
 
 const columns = [
   { key: 'select', label: '', type: 'checkbox' },
@@ -25,6 +26,7 @@ export default function InventoryPage() {
   const [warehouseList, setWarehouseList] = useState([]);
   const [suppliersList, setSuppliersList] = useState([]);
   const [productTypeList, setProductTypeList] = useState([]);
+  const [prodSuppList, setProdSuppList] = useState([]);
 
   const [selectedWarehouse, setSelectedWarehouse] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -134,6 +136,22 @@ export default function InventoryPage() {
   }, []);
 
   useEffect(() => {
+    fetch('/api/inventory/product_supplier')
+      .then(res => res.json())
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const prod_supp_list = data.map((item: any) => ({
+            product_id: item.product_id,
+            supplier_id: item.supplier_id,
+          }));
+          setProdSuppList(prod_supp_list);
+        }
+      )
+  }, []);
+
+  useEffect(() => {
     let filtered = [...tableData];
 
     if (selectedWarehouse) {
@@ -145,12 +163,16 @@ export default function InventoryPage() {
     }
 
     if (selectedSupplier) {
-      filtered = filtered.filter(item => item['supplier_id'] === Number(selectedSupplier));
-    }
+    const matchingProductIds = prodSuppList
+      .filter(link => link['supplier_id'] === Number(selectedSupplier))
+      .map(link => link['product_id']);
+
+    filtered = filtered.filter(item => matchingProductIds.includes(item['product_id']));
+  }
 
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [selectedWarehouse, selectedCategory, selectedSupplier, tableData]);
+  }, [selectedWarehouse, selectedCategory, selectedSupplier, tableData, prodSuppList]);
 
   return (
     <div className="flex">
@@ -195,6 +217,25 @@ export default function InventoryPage() {
               setCurrentPage(1);
             }}
           />
+          <div className="flex items-center gap-2">
+            <label className="text-[#8b0f14] font-bold">
+              Search:
+            </label>
+            <input
+              type="text"
+              placeholder="Search by name"
+              className="border border-gray-300 rounded px-2 py-1 w-64"
+            />
+            <Button
+              label={
+                <div className="flex items-center gap-2">
+                  <FaSearch className="w-4 h-4" />
+                </div>
+              }
+              className="bg-[#a01217] text-white hover:bg-[#8b0f14] transition-colors p-2 w-fit h-fit"
+              onClick={() => {}}
+            />
+          </div>
         </div>
 
         <DynamicTable
