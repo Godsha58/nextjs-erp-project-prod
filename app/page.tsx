@@ -14,7 +14,7 @@ export default function Home() {
       router.push("/login");
     }
   }, [router]);
-  //Holis//
+  //Holisa//
   return (
     <div className="flex flex-col min-h-screen min-w-screen bg-black relative overflow-hidden">
       {/* Background decorative elements */}
