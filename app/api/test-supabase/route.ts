@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../dbconnection';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  const { data, error } = await supabase.from('clients').select('*').limit(1);
+  const supabase = await createClient();
+  const { data: clients, error } = await supabase.from("clients").select();
+
   if (error) {
-    return NextResponse.json({ success: false, error: error.message });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ success: true, data });
+
+  return NextResponse.json(clients);
 }
