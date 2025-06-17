@@ -27,12 +27,12 @@ export default function OrdersPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const transformedData = data.map((order: any) => ({
           order_id: order.order_id,
-          client: order.client_id,
-          suplier: order.supplier_id,
+          client: order.client_name,
+          suplier: order.name,
           quantity: order.quantity,
           description: order.description,
           status: order.status,
-          date: order.order_date
+          date: order.order_date,
         }));
         setOrders(transformedData);
       })
