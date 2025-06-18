@@ -35,6 +35,7 @@ export default function InventoryPage() {
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null);
 
   const [showAlertDialog, setShowAlertDialog] = useState(false);
+  const [showRemove, setShowRemove] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -164,6 +165,18 @@ setSuppliersList(suppliers);
   setCurrentPage(1);
 }, [inputValue, tableData, filteredByDropdown]);
 
+useEffect(() => {
+
+  console.log("Cantidad de ids seleccionadas: "+ selectedIds.length);
+  
+
+  if (selectedIds.length > 0) {
+    setShowRemove(true);
+  }else{
+    setShowRemove(false);
+  }
+},[selectedIds]);
+
   return (
     <div className="flex">
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
@@ -246,12 +259,14 @@ setSuppliersList(suppliers);
         />
 
         <div className="mt-4 flex flex-wrap gap-4">
-          <Button
+          {showRemove &&(
+            <Button
             label="Remove"
             onClick={() => {
               setShowAlertDialog(true);
             }}
           />
+          )}
           <Button label="Register product" onClick={() => alert('Register product')} />
           <Button label="Register entry" onClick={() => alert('Register entry')} />
           <Button label="Change warehouse" onClick={() => alert('Change warehouse')} />
