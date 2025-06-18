@@ -1,4 +1,4 @@
-name: Linter
+name: Linter and Build Workflow
 
 on:
   push:
