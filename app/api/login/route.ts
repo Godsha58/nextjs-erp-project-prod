@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -8,12 +14,28 @@ export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
-    if (username !== 'richy' || password !== 'richy.com') {
-      return NextResponse.json({ error: 'Credenciales incorrectas' }, { status: 401 });
+    const { data, error } = await supabase
+      .from('employees')
+      .select('*')
+      .eq('email', username)
+      .single();
+
+    if (error || !data) {
+      return NextResponse.json({ error: 'User not found' }, { status: 401 });
+    }
+
+    if (data.password !== password) {
+      return NextResponse.json({ error: 'Incorrect password' }, { status: 401 });
     }
 
     const token = jwt.sign(
-      { id: 1, username: 'richy' },
+      {
+        employee_id: data.employee_id,
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        role_id: data.role_id,
+      },
       JWT_SECRET,
       { expiresIn: '2h' }
     );
@@ -31,7 +53,7 @@ export async function POST(req: NextRequest) {
     return res;
 
   } catch (error) {
-    console.error('Error en login:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    console.error('Login error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
