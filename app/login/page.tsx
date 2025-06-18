@@ -4,29 +4,40 @@ import { useRouter } from 'next/navigation';
 import './login.css';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    // Si ya está autenticado, redirige al dashboard
-    if (typeof window !== "undefined" && localStorage.getItem("isAuthenticated") === "true") {
-      router.push("/");
+    // Redirigir si ya hay cookie (revisión simple, idealmente con verificación del token en el server)
+    if (document.cookie.includes('token=')) {
+      router.push('/');
     }
   }, [router]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Autenticación simulada
-    if (email === "alan@alan.com" && password === "1234") {
-      localStorage.setItem("isAuthenticated", "true");
-      router.push("/"); // Redirige al dashboard
-    } else {
-      alert("Credenciales incorrectas");
-    }
-  };
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
 
-  // 👇 Aquí agregas el useEffect
+    if (res.ok) {
+      const { token } = await res.json();
+      console.log('JWT recibido:', token); // 👉 Aquí lo verás en la consola
+      router.push('/');
+    } else {
+      const { error } = await res.json();
+      alert(error || 'Credenciales incorrectas');
+    }
+  } catch (err) {
+    alert('Error al conectar con el servidor');
+  }
+};
+
+  // Animación de texto
   useEffect(() => {
     const texts = ['Welcome', 'Bienvenido', 'Bienvenue', 'Bem-vindo', '欢迎'];
     const typingElement = document.querySelector('.typewriter-text');
@@ -36,7 +47,7 @@ function Login() {
 
     const type = () => {
       const currentText = texts[index];
-       if (!typingElement) return;
+      if (!typingElement) return;
 
       if (isDeleting) {
         charIndex--;
@@ -49,7 +60,7 @@ function Login() {
       let delay = isDeleting ? 50 : 120;
 
       if (!isDeleting && charIndex === currentText.length) {
-        delay = 1500; // Espera antes de borrar
+        delay = 1500;
         isDeleting = true;
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
@@ -70,14 +81,14 @@ function Login() {
         <form className="login-form" onSubmit={handleLogin}>
           <h2><span className="typewriter-text"></span></h2>
           <input
-            type="email"
-            placeholder="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
             type="password"
-            placeholder="password"
+            placeholder="contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
