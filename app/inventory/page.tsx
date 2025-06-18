@@ -47,6 +47,7 @@ export default function InventoryPage() {
   const [inputValue, setInputValue] = useState<string>('');
   const [filteredData, setFilteredData] = useState<FilteredProducts[]>([]);
   const [filteredByDropdown, setFilteredByDropdown] = useState<FilteredProducts[]>([]);
+
   interface FilteredProducts {
   select: boolean;
   id: string;
