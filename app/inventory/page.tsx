@@ -37,6 +37,7 @@ export default function InventoryPage() {
 
   const [showAlertDialog, setShowAlertDialog] = useState(false);
   const [showRemove, setShowRemove] = useState(false);
+  const [shouldDelete, setShouldDelete] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -229,9 +230,58 @@ useEffect(() => {
       console.error("Error calling API", error);
     }
   };
-
   updateActiveStatus();
 }, [productState]);
+
+useEffect(() => {
+  if (!shouldDelete || selectedIds.length === 0) return;
+
+  const removeProduct = async () => {
+    try {
+      const res = await fetch('/api/inventory/remove-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(selectedIds),
+      });
+      const result = await res.json();
+      if (result.success) {
+        const res = await fetch('/api/inventory/products');
+        const data = await res.json();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const transformed = data.map((item: any) => ({
+          select: true,
+          id: item.product_id.toString(),
+          product_id: item.product_id,
+          warehouse_id: item.warehouse_id,
+          name: item.name,
+          description: item.description,
+          sku: item.sku,
+          category_id: item.category_id,
+          brand: item.brand,
+          measure_unit: item.measure_unit,
+          cost_price: item.cost_price,
+          sale_price: item.sale_price,
+          active: item.active,
+          stock: item.stock,
+          supplier_name: item.supplier_name,
+          warehouse_name: item.warehouse_name,
+          category_name: item.category_name
+        }));
+
+        setTableData(transformed);
+        setSelectedIds([]);         
+        setShouldDelete(false);     
+      } else {
+        console.error("Error updating products", result.errors);
+      }
+    } catch (error) {
+      console.error("Error calling API", error);
+    }
+  };
+
+  removeProduct();
+}, [shouldDelete, selectedIds]);
 
   return (
     <div className="flex">
@@ -244,7 +294,7 @@ useEffect(() => {
                 title='alerta'
                 icon={<GoAlertFill className="w-10 h-10" />}
                 content='¿Está seguro que quiere eliminar el siguiente producto de la base de datos?'
-                onSuccess={() => alert(selectedIds.join(", "))}
+                onSuccess={() => setShouldDelete(true)}
                 onCancel={() => setShowAlertDialog(false)}
                 />
             )
