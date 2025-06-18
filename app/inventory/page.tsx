@@ -25,6 +25,7 @@ const columns = [
 export default function InventoryPage() {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [productState, setProductState] = useState<{ id: string; active: boolean }[]>([]);
   const [tableData, setTableData] = useState<FilteredProducts[]>([]);
   const [warehouseList, setWarehouseList] = useState<Option[]>([]);
   const [suppliersList, setSuppliersList] = useState<Option[]>([]);
@@ -175,7 +176,62 @@ useEffect(() => {
   }else{
     setShowRemove(false);
   }
-},[selectedIds]);
+},[selectedIds]); 
+
+useEffect(() => {
+  if (productState.length === 0) return;
+
+  const updateActiveStatus = async () => {
+    try {
+      const res = await fetch('/api/inventory/update-active', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productState),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        fetch('/api/inventory/products')
+      .then(res => res.json())
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformed = data.map((item: any) => ({
+            select: true,
+            id: item.product_id.toString(),
+            product_id: item.product_id,
+            warehouse_id: item.warehouse_id,
+            name: item.name,
+            description: item.description,
+            sku: item.sku,
+            category_id: item.category_id,
+            brand: item.brand,
+            measure_unit: item.measure_unit,
+            cost_price: item.cost_price,
+            sale_price: item.sale_price,
+            active: item.active,
+            stock: item.stock,
+            supplier_name: item.supplier_name,
+            warehouse_name: item.warehouse_name,
+            category_name: item.category_name
+          }));
+          setTableData(transformed);
+        }
+      );
+      }else{
+        console.error("Error updating products", result.errors);
+      }
+    } catch (error) {
+      console.error("Error calling API", error);
+    }
+  };
+
+  updateActiveStatus();
+}, [productState]);
 
   return (
     <div className="flex">
@@ -217,6 +273,7 @@ useEffect(() => {
               setSelectedWarehouse(null);
               setSelectedCategory(null);
               setSelectedSupplier(null);
+              setInputValue('');
               setCurrentPage(1);
             }}
           />
@@ -256,6 +313,7 @@ useEffect(() => {
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           onSelectedRowsChange={ids => setSelectedIds(ids)}
+          onActiveChange={(states) => setProductState(states)}
         />
 
         <div className="mt-4 flex flex-wrap gap-4">
