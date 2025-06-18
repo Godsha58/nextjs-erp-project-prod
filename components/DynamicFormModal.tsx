@@ -3,21 +3,21 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Button from './Button';
-
-interface Field {
-  name: string;
-  label: string;
-  type: 'text' | 'number' | 'select' | 'switch';
-  options?: { label: string; value: string }[];
-}
-
 interface DynamicFormModalProps {
   title: string;
   fields: Field[];
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (data: Record<string, any>) => void;
 }
+
+export type Field = {
+  name: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'switch';
+  options?: { label: string; value: string }[];
+};
 
 export default function DynamicFormModal({
   title,
@@ -27,6 +27,7 @@ export default function DynamicFormModal({
   onSubmit,
 }: DynamicFormModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   // Bloquear scroll
@@ -52,7 +53,7 @@ export default function DynamicFormModal({
       onClose();
     }
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (name: string, value: any) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
