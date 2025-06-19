@@ -78,7 +78,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <img src="/logo.png" alt="NitroDrive Logo" className="login-logo" />
+      <Image src="/logo4k.png" alt="NitroDrive Logo" className="login-logo" width={1228} height={772}/>
       <div className="login-content">
         <form className="login-form" onSubmit={handleLogin}>
           <h2><span className="typewriter-text"></span></h2>
