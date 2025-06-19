@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 
+const supabase = await createClient();
+
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function POST(req: NextRequest) {
