@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import jwt from "jsonwebtoken";
-import cookie from "cookie";
+import { serialize } from "cookie";
 
 const supabase = await createClient();
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     res.headers.set(
       "Set-Cookie",
-      cookie.serialize("token", token, {
+      serialize("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
