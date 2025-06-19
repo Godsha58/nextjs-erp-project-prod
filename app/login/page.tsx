@@ -32,7 +32,7 @@ function Login() {
         const { error } = await res.json();
         alert(error || 'Invalid credentials');
       }
-    } catch (err: any) {
+    } catch (err) {
     console.error(err);
     alert('Failed to connect to the server');
     }
