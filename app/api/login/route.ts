@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import jwt from 'jsonwebtoken';
-import cookie from 'cookie';
+import jwt from "jsonwebtoken";
+import cookie from "cookie";
 
 const supabase = await createClient();
 
@@ -11,18 +11,14 @@ export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
-    const { data, error } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('email', username)
-      .single();
+    const { data, error } = await supabase.from("employees").select("*").eq("email", username).single();
 
     if (error || !data) {
-      return NextResponse.json({ error: 'User not found' }, { status: 401 });
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
     if (data.password !== password) {
-      return NextResponse.json({ error: 'Incorrect password' }, { status: 401 });
+      return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
     }
 
     const token = jwt.sign(
@@ -34,23 +30,25 @@ export async function POST(req: NextRequest) {
         role_id: data.role_id,
       },
       JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: "2h" }
     );
 
     const res = NextResponse.json({ success: true, token });
 
-    res.headers.set('Set-Cookie', cookie.serialize('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 60 * 60 * 2,
-    }));
+    res.headers.set(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 2,
+      })
+    );
 
     return res;
-
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Login error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
