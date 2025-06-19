@@ -3,11 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 
-const supabase = await createClient();
-
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function POST(req: NextRequest) {
+
+  const supabase = await createClient();
+
   try {
     const { username, password } = await req.json();
 
