@@ -39,6 +39,7 @@ type Props = {
   data: RowData[] | FilteredProducts[];
   columns: ColumnConfig[];
   onSelectedRowsChange?: (selectedIds: string[]) => void;
+  onActiveChange?: (activeStates: { id: string; active: boolean }[]) => void;
   onDataChange?: (updatedData: RowData[]) => void;
   currentPage?: number;
   onPageChange?: Dispatch<SetStateAction<number>>;
@@ -60,11 +61,13 @@ export default function DynamicTable({
   data: initialData,
   columns,
   onSelectedRowsChange,
+  onActiveChange,
   onDataChange,
   actionHandlers,
   actionIcons,
 }: Props) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [isActive, setIsActive] = useState<boolean | undefined>();
   const [data, setData] = useState<RowData[]>(initialData);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
@@ -84,6 +87,10 @@ export default function DynamicTable({
   useEffect(() => {
   setData(initialData);
 }, [initialData]);
+
+useEffect(() => {
+  console.log("el estado es: "+isActive);
+},[isActive]);
   
   const toggleRow = (rowId: string) => {
     const updated = selectedRows.includes(rowId)
@@ -95,15 +102,23 @@ export default function DynamicTable({
   };
 
   const toggleActive = (rowId: string) => {
-    const newData = data.map((row) => {
-      if (row.id === rowId) {
-        return { ...row, active: !row.active };
-      }
-      return row;
-    });
-    setData(newData);
-    if (onDataChange) onDataChange(newData);
-  };
+  const newData = data.map((row) => {
+    if (row.id === rowId) {
+      const newActive = !row.active;
+      setIsActive(newActive);
+      return { ...row, active: newActive };
+    }
+    return row;
+  });
+
+  setData(newData);
+  if (onDataChange) onDataChange(newData);
+
+  const changedRow = newData.find((row) => row.id === rowId);
+  if (onActiveChange && changedRow) {
+    onActiveChange([{ id: rowId, active: changedRow.active as boolean }]);
+  }
+};
 
 
   if (!data || data.length === 0) {
