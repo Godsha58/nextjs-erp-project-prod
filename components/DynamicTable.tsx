@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 type ColumnConfig = {
   key: string;
@@ -106,7 +105,6 @@ export default function DynamicTable({
     if (onDataChange) onDataChange(newData);
   };
 
-  const router = useRouter();
 
   if (!data || data.length === 0) {
     return (
@@ -181,8 +179,7 @@ export default function DynamicTable({
                       <div className="flex gap-2">
                         <button
                           onClick={() =>
-                            actionHandlers?.onView?.(row.id) ??
-                            router.push("/finance/pending-to-pay/" + row.id)
+                            actionHandlers?.onView?.(row.id)
                           }
                           className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                         >
@@ -190,8 +187,7 @@ export default function DynamicTable({
                         </button>
                         <button
                           onClick={() =>
-                            actionHandlers?.onAccept?.(row.id) ??
-                            alert(`Editar fila ${row.id}`)
+                            actionHandlers?.onAccept?.(row.id) 
                           }
                           className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                         >
@@ -199,8 +195,7 @@ export default function DynamicTable({
                         </button>
                         <button
                           onClick={() =>
-                            actionHandlers?.onCancel?.(row.id) ??
-                            alert(`Eliminar fila ${row.id}`)
+                            actionHandlers?.onCancel?.(row.id) 
                           }
                           className="p-2 text-[#a01217] bg-[#a0121722] rounded-full hover:bg-[#a0121744]"
                         >
