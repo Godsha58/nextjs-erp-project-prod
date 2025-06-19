@@ -9,35 +9,37 @@ function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirigir si ya hay cookie (revisión simple, idealmente con verificación del token en el server)
+    // Redirect if JWT cookie exists (basic check; ideally should validate the token on server)
     if (document.cookie.includes('token=')) {
       router.push('/');
     }
   }, [router]);
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (res.ok) {
-      const { token } = await res.json();
-      console.log('JWT recibido:', token); // 👉 Aquí lo verás en la consola
-      router.push('/');
-    } else {
-      const { error } = await res.json();
-      alert(error || 'Credenciales incorrectas');
+      if (res.ok) {
+        const { token } = await res.json();
+        console.log('Received JWT:', token); // 👉 Debug: print JWT in console
+        router.push('/');
+      } else {
+        const { error } = await res.json();
+        alert(error || 'Invalid credentials');
+      }
+    } catch (err: any) {
+    console.error(err);
+    alert('Failed to connect to the server');
     }
-  } catch (err) {
-    alert('Error al conectar con el servidor');
-  }
-};
 
-  // Animación de texto
+  };
+
+  // Text typing animation
   useEffect(() => {
     const texts = ['Welcome', 'Bienvenido', 'Bienvenue', 'Bem-vindo', '欢迎'];
     const typingElement = document.querySelector('.typewriter-text');
@@ -82,17 +84,17 @@ const handleLogin = async (e: React.FormEvent) => {
           <h2><span className="typewriter-text"></span></h2>
           <input
             type="text"
-            placeholder="usuario"
+            placeholder="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
             type="password"
-            placeholder="contraseña"
+            placeholder="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit">Entrar</button>
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>
