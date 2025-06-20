@@ -3,7 +3,7 @@ name: Supabase DB Backup
 on:
   schedule:
     - cron: '0 3 * * *'  # Todos los días a las 3:00 AM UTC
-  workflow_dispatch:     # También puedes ejecutarlo manualmente
+  workflow_dispatch:
 
 jobs:
   backup:
@@ -16,7 +16,7 @@ jobs:
 
       - name: Install Supabase CLI
         run: |
-          curl -L -o supabase.tar.gz https://github.com/supabase/cli/releases/download/v1.156.3/supabase-cli-linux-amd64.tar.gz
+          curl -L -o supabase.tar.gz https://github.com/supabase/cli/releases/download/v2.26.9/supabase_linux_amd64.tar.gz
           tar -xzf supabase.tar.gz
           sudo mv supabase /usr/local/bin
 
@@ -26,7 +26,10 @@ jobs:
       - name: Dump Supabase database
         run: |
           mkdir -p backups
-          supabase db dump --project-ref tmxhsqexsxnizmsffzad --db-url "postgres://postgres:${{ secrets.DB_PASSWORD }}@tmxhsqexsxnizmsffzad.supabase.co:6543/postgres" > backups/db_backup_${{ env.NOW }}.sql
+          supabase db dump \
+            --project-ref tmxhsqexsxnizmsffzad \
+            --db-url "postgres://postgres:${{ secrets.DB_PASSWORD }}@tmxhsqexsxnizmsffzad.supabase.co:6543/postgres" \
+            > backups/db_backup_${{ env.NOW }}.sql
 
       - name: Upload backup
         uses: actions/upload-artifact@v4
