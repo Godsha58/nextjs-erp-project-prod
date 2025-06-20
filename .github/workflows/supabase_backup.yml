@@ -19,21 +19,15 @@ jobs:
           tar -xzf supabase.tar.gz
           sudo mv supabase /usr/local/bin
 
-      - name: Set Supabase auth token
+      - name: Set Supabase access token
         run: echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_ACCESS_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Create Supabase config
-        run: |
-          mkdir -p tmp
-          echo "[project]" > tmp/config.toml
-          echo "ref = \"tmxhsqexsxnizmsffzad\"" >> tmp/config.toml
-
-      - name: Dump database
+      - name: Dump Supabase database using local config
         run: |
           mkdir -p backups
           supabase db dump \
             --file backups/db_backup_${{ env.NOW }}.sql \
-            --workdir tmp
+            --workdir .supabase
 
       - name: Upload backup to GitHub
         uses: actions/upload-artifact@v4
