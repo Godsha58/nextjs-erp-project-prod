@@ -2,7 +2,7 @@ name: Supabase DB Backup
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Todos los días a las 3:00 AM UTC
+    - cron: '0 3 * * *'  # Diario a las 3am UTC
   workflow_dispatch:
 
 jobs:
@@ -11,7 +11,6 @@ jobs:
 
     steps:
       - name: Set current timestamp
-        id: timestamp
         run: echo "NOW=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
 
       - name: Install Supabase CLI
@@ -20,17 +19,23 @@ jobs:
           tar -xzf supabase.tar.gz
           sudo mv supabase /usr/local/bin
 
-      - name: Configure Supabase CLI auth
+      - name: Set Supabase auth token
         run: echo "SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_ACCESS_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Dump Supabase database
+      - name: Create Supabase config
+        run: |
+          mkdir -p tmp
+          echo "[project]" > tmp/config.toml
+          echo "ref = \"tmxhsqexsxnizmsffzad\"" >> tmp/config.toml
+
+      - name: Dump database
         run: |
           mkdir -p backups
           supabase db dump \
-            --db-url "postgres://postgres:${{ secrets.DB_PASSWORD }}@tmxhsqexsxnizmsffzad.supabase.co:6543/postgres" \
-            --file backups/db_backup_${{ env.NOW }}.sql
+            --file backups/db_backup_${{ env.NOW }}.sql \
+            --workdir tmp
 
-      - name: Upload backup
+      - name: Upload backup to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup-${{ env.NOW }}
