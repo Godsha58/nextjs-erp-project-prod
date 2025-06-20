@@ -1,0 +1,31 @@
+name: Supabase Daily Backup
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # A las 3:00 AM UTC todos los días
+  workflow_dispatch:     # Permite ejecutarlo manualmente
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set current timestamp
+        id: timestamp
+        run: echo "NOW=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run pg_dump
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          mkdir -p backups
+          pg_dump -h ${{ secrets.DB_HOST }} -p ${{ secrets.DB_PORT }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -F c -b -v -f "backups/supabase_backup_${{ env.NOW }}.dump"
+
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-backup-${{ env.NOW }}
+          path: backups/supabase_backup_${{ env.NOW }}.dump
