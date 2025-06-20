@@ -110,7 +110,7 @@ export default function InventoryPage() {
     setSelectedIds,
     setShouldDelete
   )
-
+  
   return (
     <div className="flex">
       <div className={`flex flex-col flex-1 ${styles.contentBackground}`}>
