@@ -26,8 +26,7 @@ jobs:
         run: |
           mkdir -p backups
           supabase db dump \
-            --file backups/db_backup_${{ env.NOW }}.sql \
-            --db-url "postgres://postgres:${{ secrets.DB_PASSWORD }}@tmxhsqexsxnizmsffzad.supabase.co:6543/postgres"
+            --file backups/db_backup_${{ env.NOW }}.sql
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
