@@ -1,8 +1,1 @@
-[project]
-ref = "tmxhsqexsxnizmsffzad"
 
-[api]
-url = "https://tmxhsqexsxnizmsffzad.supabase.co"
-
-[db]
-password = ""
