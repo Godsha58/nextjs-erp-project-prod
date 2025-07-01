@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import FolioStatus from "@/components/Maintenance/FolioStatus";
+import Inputs from "@/components/Maintenance/Inputs";
+import { useEffect, useState } from "react";
 import { FaCalendarCheck, FaCarSide, FaCheckCircle, FaTools, } from "react-icons/fa";
+import { getRole } from "./getRole";
 
 export default function TrackingPage() {
   const [folioInput, setFolioInput] = useState("");
   const [folio, setFolio] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [role, setRole] = useState<string>('');
 
   const statusSteps = [
     { label: "Scheduled", icon: <FaCalendarCheck className="text-xl" /> },
@@ -20,6 +24,13 @@ export default function TrackingPage() {
 
   let progressWidth = ((currentIndex + 0.5) / (statusSteps.length - 1)) * 100;
   progressWidth = progressWidth > 100 ? 100 : progressWidth;
+
+  useEffect(()=>{
+    (async ()=>{
+      const response = await getRole();
+      setRole(response);
+    })()    
+  },[])
   
   const handleCheckStatus = async () => {
     if (folioInput.trim() !== "") {
@@ -45,7 +56,7 @@ export default function TrackingPage() {
         
         try {
         const response = await fetch("../api/maintenance/tracking/maintenance", {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -81,17 +92,9 @@ export default function TrackingPage() {
             <label className="block text-gray-600 font-medium">
               Enter your folio
             </label>
-            <input
-              type="text"
-              value={folioInput}
-              onChange={(e) => setFolioInput(e.target.value)}
-              placeholder="Ej. ABC123456"
-              className="w-full bg-gray-100 border border-gray-300 p-3 rounded-lg"
-            />
-            <button
-              onClick={handleCheckStatus}
-              className="bg-red-700 text-white px-6 py-3 rounded-lg w-full hover:bg-red-900"
-            >
+            <Inputs placeholder="Ej. ABC123456" setValue={setFolioInput} value={folioInput} title=""  />
+
+            <button onClick={handleCheckStatus} className="bg-red-700 text-white px-6 py-3 rounded-lg w-full hover:bg-red-900" >
               Check Status
             </button>
           </div>
@@ -103,46 +106,21 @@ export default function TrackingPage() {
               Folio: <span className="font-mono text-black">{folio}</span>
             </h2>
 
-            <div className="relative flex items-center justify-between">
-              <div className="absolute top-7 left-0 right-0 h-1">
-                <div className="h-1 bg-gray-300 w-full" />
-                <div
-                  className="h-2 bg-red-600 absolute top-[-2px] z-20"
-                  style={{ width: `${progressWidth}%` }}
-                />
+           <FolioStatus currentIndex={currentIndex} progressWidth={progressWidth} statusSteps={statusSteps} />
+
+            {role == '6'  ? (
+                <>
+                  <div className="flex justify-center">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300"
+                >
+                  Update Status
+                </button>
               </div>
-
-              {statusSteps.map((step, index) => {
-                const isActive = index <= currentIndex;
-                return (
-                  <div
-                    key={step.label}
-                    className="relative z-30 flex flex-col items-center w-1/4"
-                  >
-                    <div
-                      className={`w-14 h-14 flex items-center justify-center rounded-full border-4 mb-2 transition-colors duration-300 ${isActive
-                        ? "border-red-500 bg-red-600 text-white"
-                        : "border-gray-300 bg-gray-100 text-gray-500"
-                        }`}
-                    >
-                      {step.icon}
-                    </div>
-                    <p className="text-sm text-center text-gray-700">
-                      {step.label}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300"
-              >
-                Update Status
-              </button>
-            </div>
+                </>
+              ) : <></>
+            }
           </div>
         )}
 
